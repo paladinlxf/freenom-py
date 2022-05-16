@@ -3,7 +3,7 @@ name: freenom-renew
 on:
   push:
   schedule:
-    - cron: '20 23 */10 * *'
+    - cron: '23 23 */10 * *'
   
 env:
   FN_ID: ${{ secrets.FN_ID }}
