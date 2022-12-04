@@ -5,21 +5,17 @@ from email.mime.text import MIMEText
 
 from jinja2 import Environment, FileSystemLoader, Template
 
-from . import settings
+from utils import settings
 
 
-class EmailPoster(object):
-    """
-    邮件发送基础类
-
-    """
+class EmailPoster:
+    """邮件发送基础类"""
 
     @staticmethod
-    def get_template():
+    def get_template() -> Template:
         loader = FileSystemLoader("templates")
         env = Environment(autoescape=True, loader=loader)
-        template = env.get_template("default.html")
-        return template
+        return env.get_template("default.html")
 
     def send(self, data: dict):
         payload = data.get("payload", {})
@@ -49,5 +45,5 @@ class EmailPoster(object):
             smtp.login(settings.MAIL_USER, settings.MAIL_PW)
             smtp.sendmail(settings.MAIL_ADDRESS, mail_to, msg_root.as_string())
             smtp.quit()
-        except Exception as e:
-            print(traceback.format_exc(e))
+        except Exception:
+            print(traceback.format_exc())

@@ -21,27 +21,47 @@ MAIL_TO: 收件人邮箱可与发件人相同 address@vip.qq.com 或 123456@qq.c
 依赖模块说明
 pip install -r requirements.txt / pip3 install -r requirements.txt
 """
-import utils.settings
+
 from utils.exception import CustomException
 from utils.freenom import FreeNom
 from utils.mail import EmailPoster
+from utils.settings import (
+    FN_ID,
+    FN_PW,
+    MAIL_ADDRESS,
+    MAIL_HOST,
+    MAIL_PORT,
+    MAIL_PW,
+    MAIL_TO,
+    MAIL_USER,
+)
+
+
+def mask_data(data: str) -> str:
+    return "".join(
+        ["*" if i > 2 and i < len(data) - 3 else data[i] for i in range(len(data))]
+    )
 
 
 def main():
-    print("配置信息")
-    print(
-        [MAIL_TO, MAIL_PORT, MAIL_HOST, MAIL_ADDRESS, MAIL_PW, MAIL_USER, FN_ID, FN_PW]
-    )
-    if not all(
-        [MAIL_TO, MAIL_PORT, MAIL_HOST, MAIL_ADDRESS, MAIL_PW, MAIL_USER, FN_ID, FN_PW]
-    ):
+    envs = [
+        FN_ID,
+        FN_PW,
+        MAIL_USER,
+        MAIL_ADDRESS,
+        MAIL_PW,
+        MAIL_HOST,
+        MAIL_PORT,
+        MAIL_TO,
+    ]
+    print("配置信息（脱敏后）：")
+    print([mask_data(env) if isinstance(env, str) else env for env in envs])
+    if not all(envs):
         raise CustomException("参数缺失")
-
-    to = [MAIL_TO]
 
     body = {
         "subject": "FreeNom 自动续期",
-        "to": to,
+        "to": [MAIL_TO],
     }
     try:
         results = FreeNom().run()
